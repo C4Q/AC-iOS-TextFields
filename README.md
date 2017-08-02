@@ -26,6 +26,18 @@
     - `MainViewController`, `LoginViewController`, `SignupViewController`
 - In your `Main.storyboard`, there will be a `MainViewController` with `UINavigationController` already embedded
 
+#### Challenge:
+
+A core skill for any iOS developer is being able to look at a mock up and translating it into code and/or a storyboard. If you feel up to it, take a look at the following images and try to get as far as you can in your design in storyboard. If you get stuck, or think you've finished, go ahead and double check your work by following the instructions in the next section!
+
+#### Storyboard
+<img src="./Images/login_screen_storyboard.png" width="400" alt="Login Screen Setup Storyboard">
+
+#### Running in Simulator
+<img src="./Images/login_screen_sim.png" width="400" alt="Login Screen in Simulator (7s+)">
+
+---
+
 #### Deep into the Storyboard:
 
 1. Add two buttons to `MainViewController`
