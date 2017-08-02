@@ -10,7 +10,10 @@ import UIKit
 
 class LoginViewController: UIViewController {
     
-    override func viewDidLoad() {
+	@IBOutlet weak var nameTextField: UITextField!
+	@IBOutlet weak var passwordTextField: UITextField!
+	@IBOutlet weak var errorLabel: UILabel!
+	override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
@@ -20,8 +23,12 @@ class LoginViewController: UIViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
-    
-    
+	
+	// MARK: - Actions
+	@IBAction func didTapLogin(_ sender: UIButton) {
+		print("Tapped Login")
+	}
+	
     // MARK: - Validations
     func textFieldsAreValid() -> Bool {
         

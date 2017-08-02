@@ -26,16 +26,19 @@
     - `MainViewController`, `LoginViewController`, `SignupViewController`
 - In your `Main.storyboard`, there will be a `MainViewController` with `UINavigationController` already embedded
 
-#### Get Setup:
+#### Deep into the Storyboard:
 
 1. Add two buttons to `MainViewController`
     - Label them `Login` and `Signup`
-    - Select both of them, and embed in a `UIStackViewController` (same as how you would embed in a navigation controller)
-    - With the stack view selected, add 2 constraints: centerY and centerX to place it in the center of the view
+    - Select both of them (by holding `CMD` while clicking on them), and embed them in a `UIStackViewController`
+        - This is done the same as how you would embed in a navigation controller, `Editor > Embed In > StackView`)
+    - With the **stack view** selected, add 2 constraints: `centerY` and `centerX` to place it in the center of the view
+    - <img src="./Images/centering_buttons_in_stack.png" width="400" alt="Centering buttons">
 2. Drag in two more view controllers into storyboard
     - Add a `show` segue with the identifier `loginSegue` from the `Login` button to one of the VC's. Change this VC's class to `LoginViewController`.
     - Add a `show` segue with the identifier `signupSegue` from the `Signup` button to the other VC. Change this VC to `SignupViewController`
     - Run project and make sure navigation is working
+    - <img src="./Images/basic_storyboard_layout.png" width="550" alt="basic layout of project">
 3. To the `LoginViewController`, add a `UILabel` and a `UITextField` just below it.
     - Set their margins to `8pt` on top, left and right, making sure to check "relative to margins"
     - Label the label as `Name`, `18 - pt, System Light`
@@ -49,7 +52,8 @@
     - `borderStyle`: `bezel` (usually for text entry fields)
     - `placeholder`: "name" (what appears in the text field before you tap in it to add text, its usually light gray text)
     - `capitilization`: `Words` (auto capitalizes first letter of each word)
-    - `correction`: no, `spellChecking`: no (we don't want autocorrect for people's names)
+    - `correction`: no
+    - `spellChecking`: no (we don't want autocorrect for people's names)
     - `returnKey`: `next` (changes the text of the return key)
     - `Automatically Enable Return Key` : make sure this unchecked (enabling this makes the return key disabled until at least one character is present, feel free to run the simulator before and after changing this to see what happens)
     - In the "Identity Inspector", make sure "Accessibility" is enabled, and give it a `Label` of `Name Text Field`
@@ -57,23 +61,25 @@
     - `borderStyle`: `bezel` (usually for text entry fields)
     - `placeholder`: "password address"
     - `capitilization`: `None`
-    - `correction`: no, `spellChecking`: no
+    - `correction`: no,
+    - `spellChecking`: no
     - `returnKey` : `Done`
     - `secureTextEntry` : `yes` (shows bulletpoints instead of letters when typing)
     - `Automatically Enable Return Key` : make sure this unchecked
     - In the "Identity Inspector", make sure "Accessibility" is enabled, and give it a `Label` of `Password Text Field`
 7. Below `Password Text Field`, drag in another label
-    - `24pt` from top, `8pt` from left and right, `centerX` aligned
+    - `24pt` from top, `8pt` from left and right, `centerX` text-aligned
     - Label it `Error Label`
         - text color Red
         - background color Red with an opacity of 25%
         - number of lines = 0
         - `17pt, System - Bold`
         - Set the label to be hidden
+        - <img src="./Images/adjusting_label_colors.png" width="400" alt="Adjusting the properties of a label">
 8. Below `Error Label`, add a button, `loginButton`
     - `8pt` top margin from `Error Label`, `centerX` aligned
     - Change text to say `Log in!`
-9. Create the outlets and actions:
+9. Create the following outlets and actions for this `LoginViewController`:
     - outlets: `nameTextField`, `passwordTextField`, `errorLabel`
     - actions: `didTapLogin(sender:)` (set the sender type to `UIButton`, NOT `AnyObject`)
     - delegate outlets: Crtl+drag from both textfields to the `LoginViewController`, in the outlets menu that pops up, select `delegate` (this is how you set up delegation through storyboard)
@@ -82,12 +88,10 @@
 11. Run the project at this point, it should look like:
 
 #### Storyboard
-![Login Screen - Storyboard](http://imgur.com/CN44NQxm.jpg)
-![Main Screen - Storyboard](http://imgur.com/cpLNtRtm.jpg)
+<img src="./Images/login_screen_storyboard.png" width="400" alt="Login Screen Setup Storyboard">
 
 #### Running in Simulator
-![Login Screen - Simulator](http://imgur.com/yd6l0Rsm.jpg)
-![Main Screen - Simulator](http://imgur.com/BwHMLYbm.jpg)
+<img src="./Images/login_screen_sim.png" width="400" alt="Login Screen in Simulator (7s+)">
 
 ---
 ### 2. Text Field Delegation
