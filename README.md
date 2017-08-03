@@ -1,4 +1,4 @@
-### AC3.2 Textfields and Delegation
+### AC3.2 Delegation through Textfields
 
 ---
 ### Readings
@@ -10,11 +10,168 @@
 5. [String Manipulation Cheat Sheet - Use Your Loaf](http://useyourloaf.com/blog/swift-string-cheat-sheet/)
 6. [Complete List of Unicode Categories - File Format](http://www.fileformat.info/info/unicode/category/index.htm)
 
+#### Further Reading
+
+1. [How Delegation Works - Andrew Bancroft](https://www.andrewcbancroft.com/2015/04/08/how-delegation-works-a-swift-developer-guide/)
+
 ---
 ### Vocabulary
 
+1. **Delegate**: dafjsdfd
+
 ---
 ### 0. Objectives
+
+1. Begin to understand the delegation pattern in programming
+
+---
+### 1. Delegation - Wha-huh?
+
+Imagine a job posting for a personal assistant by some employer:
+
+> **Seeking**: Personal Assistant
+> **Needed Skills**: Organizing Calendar, Taking Calls, Running Errands
+
+The employer looking for and assistant is likely busy with other things, so much so that they don't have time to *organize their calendar*, or *take all their calls*, or *run errands*. But, they're willing to delegate out some of their responsibilities to their assistant. The employer doesn't really have preference for how their assistant does these tasks - they're only concerned that the tasks get done. And once something gets done, they only want to be informed by their assistant.
+
+Think of a `protocol` as a job posting looking for certain skills:
+
+```swift
+
+// "job posting" PersonalAssistant
+protocol PersonalAssistant {
+  func organizeCalendar()
+  func takeCalls() -> Bool
+  func runErrands()
+}
+
+```
+
+The employer doesn't necessarily care who they're hiring, just that they can do the functions required. So, a human that could do those tasks would be as valuable to them as a robot, or cat, or dolphin.
+
+A class/struct/enum that is qualified to be a `PersonalAssistant` does their functions on behalf of their "employer." Their "employer" has delegated out some of their duties, and really is only concerned that they happened. When an object is "qualified" to be a `PersonalAssistant`, it is said that they "**conform**" to the `PersonalAssistant protocol`.
+
+#### The `Employer`
+
+To continue the analogy, let's create a class called `Employer`. This `Employer` will have a property called `delegate` of type `PersonalAssistant?`. Why optional? Well, the `Employer` doesn't necessarily have a `PersonalAssistant` right off the bat -- they may need to "hire" one. For that, we'll add a function called `hirePersonalAssistant`. Lastly, the `Employer` needs to be able to declare that they are busy at a meeting and can't take any calls.
+
+```swift
+  class Employer {
+    // 1. this is optional because we may have not yet "hired" an assistant
+    var delegate: PersonalAssistant?
+
+    // 2. We can hire a new assistant
+    func hirePersonalAssistant(assistant: PersonalAssistant) {
+      self.delegate = assistant
+    }
+
+    // 3. Employer is going to a meeting, so their calls need to be handled somehow
+    func busyAtAMeeting() {
+      if self.delegate?.takeCalls() {
+        print("Delegate is taking the call")
+      }
+      else {
+        print("Calls going to voicemail")
+      }
+    }
+  }
+```
+
+#### The `Employee: PersonalAssistant`
+
+On the other side of things, we have an `Employee` class. The `Employee` is interested in applying to be a `PersonalAssistant`, so they can guarantee that they can fulfill the required tasks of `organizeCalendar()`, `takeCalls()`, and `runErrands`.
+
+```swift
+  // This Employee conforms to the PersonalAssistant protocol
+  class Employee: PersonalAssistant {
+
+    // 1. This employee has an additional ability, greeting people
+    func greet() {
+        print("Hi there, I'm your Personal Assistant")
+    }
+
+    // 2. But because Employee conforms to the PersonalAssistant protocol/job description, one of its required skills is to organizeCalendar
+    func organizeCalendar() {
+      print("Organizing your calendar")
+    }
+
+    // 3. Additionally, the employee needs to guarantee that they can take calls and let their employer know about it
+    func takeCalls() -> Bool {
+      print("Answering calls")
+      return true
+    }
+
+    // 4. And lastly, the employee can runErrands
+    func runErrands() {
+        print("Off running some errands")
+    }
+  }
+```
+
+#### First Day on the Job
+
+We could imagine the first day on the job looking like this:
+
+```swift
+
+// 8am, Employer gets into work. An Employee is coming in at 9am for an interview
+let boss = Employer()
+
+// 8:30a, boss has a meeting to go to
+boss.busyAtAMeeting() // prints "Calls going to voicemail"
+
+// 9a. Employee arrives for the interview to be a PersonalAssistant
+let assistant = Employee()
+assistant.greet() // prints "Hi there, I'm your Personal Assistant" ... boss thinks this is a little too soon, they haven't gotten the job yet... 🤦‍♂️
+
+// 10a. boss is so impressed by the new assistant! hires them right on the spot❗❗❗ 💰
+boss.hirePersonalAssistant(assistant)
+
+// 11a. boss heads into another meeting. but now has an assistant!
+boss.busyAtAMeeting()   // assistant prints "Answering calls"
+                        // boss prints "Delegate is taking the call"
+
+// 12a. boss and assistant take lunch and bond 🤝
+```
+
+---
+
+
+In the case of `UITextField`, the `UITextField` is the employer that is delegating certain actions to it's `UITextFieldDelegate`. It's delegate is responsible for responding to those actions as needed. But because a `UITextFieldDelegate` can be a delegate for many `UITextField`s at once, it has a parameter in its protocol functions to identify which `UITextField` has delegated out a task.
+
+The analogy for the `PersonalAssistant` would be that the assistant could work for multiple employers at once, so we could re-write the protocol like:
+
+```swift
+  protocol PersonalAssistant {
+    func organizeCalendar(for employer: Employer)
+    func takeCalls(for employer: Employer)
+    func runErrands(for employer: Employer)
+  }
+
+  class Employee: Personal Assistant {
+
+    func organizeCalendar(for employer: Employer) {
+      if employer.name == "Jon Snow" {
+        print("Organizing your calendar, Lord Commander")
+      }
+
+       if employer.name == "Daenerys Targaryen" {
+        print("Organizing your calendar, Khalessi")
+      }
+    }
+
+    // etc...
+  }
+```
+
+This is a common pattern in delegation, and you will see it often (as you have with the `UITextFieldDelegate`, `UITableViewDelegate` and `UITableViewDataSource`). The other parameters in delegate functions are related to the "task" that particular function is meant to do. With that in mind, let's look at `textField(shouldChangeCharactersIn:replacementString:)`
+
+#### `textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool`
+This delegate function is often used in pattern checking for text fields. For example, an app's password text field may only want to accept alphanumeric characters, and inputing a period or dash shouldn't be allowed. From the Apple Doc:
+
+> `replacementString string: String` The replacement string for the specified range. During typing, this parameter normally contains only the single new character that was typed, but it may contain more characters if the user is pasting text. When the user deletes one or more characters, the replacement string is empty.
+
+Now, using what we know of this protocol function along with our testing of the other `UITextFieldDelegate` functions, let's do a basic login form with validation (something that is extremely common).
 
 ---
 ### 1. Storyboard Setup
@@ -38,7 +195,7 @@ A core skill for any iOS developer is being able to look at a mock up and transl
 
 ---
 
-#### Deep into the Storyboard:
+#### Deep Dive into the Storyboard:
 
 1. Add two buttons to `MainViewController`
     - Label them `Login` and `Signup`
@@ -124,95 +281,6 @@ A core skill for any iOS developer is being able to look at a mock up and transl
     ```
 3. Run the project again, and tap the textFields and observe the output to console. Trying typing something in and hitting the "Return" key.
     - Experiment with changing the `return true` to `false` for `shouldEndEditing` and `shouldBeginEditing` and see how that affects the textFields
-
-
-#### Delegation
-Imagine a job posting for a personal assistant.
-
-> **Seeking**: Personal Assistant
-
-> **Needed Skills**: Organizing Calendar, Taking Calls, Running Errands
-
-The employer looking for the assistant is likely busy with other things, such that they don't have time to organize their calendar, or take all their calls, or run errands. But, they're willing to _delegate_ out some of their responsibilities to their assistant. Now, the employer may not have a preference for how their assistant does these task; they're only concerned that the tasks get done. And once something gets done, they want to be informed by their assistant.
-
-Now, imagine a `protocol` for a `PersonalAssistant`
-```swift
-protocol PersonalAssistant {
-  func organizeCalendar()
-  func takeCalls()
-  func runErrands()
-}
-```
-The employer doesn't necessarily care who they're hiring, just that they can do the functions required. So, a human that could do those tasks would be as valuable to them as a robot, or cat, or dolphin.
-
-A class that is qualified to be a `PersonalAssistant`, that is to say that they conform to the `PersonalAssistant protocol`, does their functions on behalf of their "employer." Their "employer" has delegated out some of their duties, and really is only concerned that they happened.
-
-```swift
-  class Employer {
-    var delegate: PersonalAssistant?
-
-    func hirePersonalAssistant(assistant: PersonalAssistant) {
-      self.delegate = assistant
-    }
-
-    func busyAtAMeeting() {
-      self.delegate?.takeCalls()
-    }
-  }
-
-
-  // Employee conforms to the PersonalAssistant protocol
-  class Employee: PersonalAssistant {
-
-    func organizeCalendar() {
-      print("Organizing your calendar")
-    }
-
-    func takeCalls() {
-      print("Answering calls")
-    }
-
-    func runErrands() {
-      print("Running to grab that thing!")
-    }
-  }
-```
-
-In the case of `UITextField`, the `UITextField` is the employer that is delegating certain actions to it's `UITextFieldDelegate`. It's delegate is responsible for responding to those actions as needed. But because a `UITextFieldDelegate` can be a delegate for many `UITextField`s at once, it has a parameter in its protocol functions to identify which `UITextField` has delegated out a task.
-
-The analogy for the `PersonalAssistant` would be that the assistant could work for multiple employers at once, so we could re-write the protocol like:
-
-```swift
-  protocol PersonalAssistant {
-    func organizeCalendar(for employer: Employer)
-    func takeCalls(for employer: Employer)
-    func runErrands(for employer: Employer)
-  }
-
-  class Employee: Personal Assistant {
-
-    func organizeCalendar(for employer: Employer) {
-      if employer.name == "Jon Snow" {
-        print("Organizing your calendar, Lord Commander")
-      }
-
-       if employer.name == "Daenerys Targaryen" {
-        print("Organizing your calendar, Khalessi")
-      }
-    }
-
-    // etc...
-  }
-```
-
-This is a common pattern in delegation, and you will see it often (as you have with the `UITextFieldDelegate`, `UITableViewDelegate` and `UITableViewDataSource`). The other parameters in delegate functions are related to the "task" that particular function is meant to do. With that in mind, let's look at `textField(shouldChangeCharactersIn:replacementString:)`
-
-#### `textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool`
-This delegate function is often used in pattern checking for text fields. For example, an app's password text field may only want to accept alphanumeric characters, and inputing a period or dash shouldn't be allowed. From the Apple Doc:
-
-> `replacementString string: String` The replacement string for the specified range. During typing, this parameter normally contains only the single new character that was typed, but it may contain more characters if the user is pasting text. When the user deletes one or more characters, the replacement string is empty.
-
-Now, using what we know of this protocol function along with our testing of the other `UITextFieldDelegate` functions, let's do a basic login form with validation (something that is extremely common).
 
 ----
 ### 3. Validation through `UITextFieldDelegate`
