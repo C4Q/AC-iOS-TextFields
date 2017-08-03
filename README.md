@@ -427,7 +427,11 @@ Additionally, in the `IBAction` we set up for the `loginButton`,`didTapLogin` we
 
 ---
 ### 4. Live Validation
-As previously mentioned, we can also do "live" validation. Meaning, the user receives feedback about what they're typing right away rather than when finally hitting "return" or the `login` button. This kind of check is done in `shouldChangeCharacters`. Let's add a validation to the `nameTextField` making sure that users can only type in letters and spaces.
+As previously mentioned, we can also do "live" validation. Meaning, the user receives feedback about what they're typing as they type rather than when finally hitting `return` or the `login` button.
+
+>> TODO: fill out exercise answers, add to exercises file
+#### Exercise:
+1. This process of live validation is done in `shouldChangeCharacters`. Let's add a validation to the `nameTextField` making sure that users can only type in letters and spaces.
 
 ```swift
     func string(_ string: String, containsOnly characterSet: CharacterSet) -> Bool {
