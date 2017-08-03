@@ -1,4 +1,4 @@
-### AC3.2 Delegation through Textfields
+# AC3.2 Delegation through Textfields
 
 ---
 ### Readings
@@ -135,47 +135,7 @@ boss.busyAtAMeeting()   // assistant prints "Answering calls"
 ```
 
 ---
-
-
-In the case of `UITextField`, the `UITextField` is the employer that is delegating certain actions to it's `UITextFieldDelegate`. It's delegate is responsible for responding to those actions as needed. But because a `UITextFieldDelegate` can be a delegate for many `UITextField`s at once, it has a parameter in its protocol functions to identify which `UITextField` has delegated out a task.
-
-The analogy for the `PersonalAssistant` would be that the assistant could work for multiple employers at once, so we could re-write the protocol like:
-
-```swift
-  protocol PersonalAssistant {
-    func organizeCalendar(for employer: Employer)
-    func takeCalls(for employer: Employer)
-    func runErrands(for employer: Employer)
-  }
-
-  class Employee: Personal Assistant {
-
-    func organizeCalendar(for employer: Employer) {
-      if employer.name == "Jon Snow" {
-        print("Organizing your calendar, Lord Commander")
-      }
-
-       if employer.name == "Daenerys Targaryen" {
-        print("Organizing your calendar, Khalessi")
-      }
-    }
-
-    // etc...
-  }
-```
-
-This is a common pattern in delegation, and you will see it often (as you have with the `UITextFieldDelegate`, `UITableViewDelegate` and `UITableViewDataSource`). The other parameters in delegate functions are related to the "task" that particular function is meant to do. With that in mind, let's look at `textField(shouldChangeCharactersIn:replacementString:)`
-
-#### `textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool`
-This delegate function is often used in pattern checking for text fields. For example, an app's password text field may only want to accept alphanumeric characters, and inputing a period or dash shouldn't be allowed. From the Apple Doc:
-
-> `replacementString string: String` The replacement string for the specified range. During typing, this parameter normally contains only the single new character that was typed, but it may contain more characters if the user is pasting text. When the user deletes one or more characters, the replacement string is empty.
-
-Now, using what we know of this protocol function along with our testing of the other `UITextFieldDelegate` functions, let's do a basic login form with validation (something that is extremely common).
-
----
-### 1. Storyboard Setup
-
+### 2. Storyboard Setup
 
 #### Orienting Yourself:
 
@@ -262,67 +222,153 @@ A core skill for any iOS developer is being able to look at a mock up and transl
 #### Running in Simulator
 <img src="./Images/login_screen_sim.png" width="400" alt="Login Screen in Simulator (7s+)">
 
----
-### 2. Text Field Delegation
 
-1. Add in the following `UITextFieldDelegate` functions:
+---
+### 2. A single `delegate`/assistant for many objects/employers
+
+```
+Job Posting: UITextfieldDelegate
+Qualifications: textFieldShouldBeginEditing, textFieldDidBeginEditing, textFieldShouldEndEditing, etc.
+Employer: UITextfield
+```
+
+In the case of `UITextField`, the `UITextField` is the employer that is delegating certain actions to it's `UITextFieldDelegate`. Its delegate is responsible for responding to those actions as needed. But because a `UITextFieldDelegate` can be a delegate for many `UITextField`s at once, it has a parameter in its protocol functions to identify which `UITextField` has delegated out a task.
+
+The analogy for the `PersonalAssistant` would be that the assistant could work for multiple employers at once, so we could re-write the protocol functions to include a parameter to let the assistant know which one of their bosses requires help:
+
+```swift
+  protocol PersonalAssistant {
+    func organizeCalendar(for employer: Employer)
+    func takeCalls(for employer: Employer) -> Bool
+    func runErrands(for employer: Employer)
+  }
+
+  class Employee: Personal Assistant {
+    func organizeCalendar(for employer: Employer) {
+      if employer.name == "Jon Snow" {
+        print("Organizing your calendar, Lord Commander")
+      }
+
+       if employer.name == "Daenerys Targaryen" {
+        print("Organizing your calendar, Khalessi")
+      }
+    }
+    // etc...
+  }
+```
+
+Including the owning object (the employer) as a parameter in the protocol's function is a common pattern in delegation, and you will see it often. For example, looking at the functions for a [`UITableViewDelegate`](https://developer.apple.com/documentation/uikit/uitableviewdelegate#), we notice that they each have a parameter of `tableView: UITableView` corresponding to the table that is alerting the delegate (there *could* be multiple, eventhough we have only ever used one so far).
+
+The other parameters in delegate functions are related to the "task" that particular function is meant to do. With that in mind, let's look at `textField(shouldChangeCharactersIn:replacementString:)`
+
+#### `textFieldShouldChangeCharacters` (shorthand)
+This delegate function is often used in pattern checking for text fields. For example, an app's password text field may only want to accept alphanumeric characters, and inputing a punctuation symbol, like a period or dash, shouldn't be allowed.
+
+From the Apple Doc for `textField(shouldChangeCharactersIn:replacementString:)`:
+
+> `replacementString string: String` The replacement string for the specified range. During typing, this parameter normally contains only the single new character that was typed, but it may contain more characters if the user is pasting text. When the user deletes one or more characters, the replacement string is empty.
+
+Now, using what we know of this protocol function along with our testing of the other `UITextFieldDelegate` functions, let's do a basic login form with validation (something that is extremely common).
+
+---
+### 3. Text Field Delegation
+
+1. Declare that `LoginViewController` will be a `UITextfieldDelegate`:
+    - `class LoginViewController: UIViewController, UITextFieldDelegate`
+1. Add in the following `UITextFieldDelegate` functions to `LoginViewController` (note: as you start typing the word `text` you should see a number of options to autocomplete):
     - `textFieldShouldBeginEditing`
     - `textFieldDidBeginEditing`
     - `textFieldShouldEndEditing`
     - `textFieldDidEndEditing`
     - `textFieldShouldReturn`
-2. In each of these functions, add a print statement such as the one below (and `return true` where appropriate):
-    ```swift
-        func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
-            // the .debugId property is defined in an extension, it's not actually part of UITextField
-            print("\n + \(textField.debugId) SHOULD BEGIN") // replace this with the function shorthand
-            return true
-        }
-    ```
-3. Run the project again, and tap the textFields and observe the output to console. Trying typing something in and hitting the "Return" key.
+2. In each of these functions, add a print statement such as the one below (and `return true` where appropriate) so that your code looks something like:
+
+```swift
+    // the .debugId property is defined in an extension, it's not actually part of UITextField
+    // it has been added to better illustrate how each of these functions get called from each
+    // of the two textfields we have in the LoginViewController
+    func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
+        print("\n + \(textField.debugId) SHOULD BEGIN")
+        return true
+    }
+
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        print("\n + \(textField.debugId) DID BEGIN")
+    }
+
+    func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
+        print("\n + \(textField.debugId) SHOULD END")
+        return true
+    }
+
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        print("\n + \(textField.debugId) DID END")
+    }
+
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        print("\n + \(textField.debugId) SHOULD RETURN")
+        return true
+    }
+```
+Run the project again, and tap the textFields and observe the output to console. Trying typing something in and hitting the "Return" key.
     - Experiment with changing the `return true` to `false` for `shouldEndEditing` and `shouldBeginEditing` and see how that affects the textFields
 
+<img src="./Images/debugging_output_textfields.png" width="500" alt="Sample output in the console after playing with textfields">
+
 ----
-### 3. Validation through `UITextFieldDelegate`
+### 4. Validation through `UITextFieldDelegate`
 
 The most basic of validation is checking to make sure that something has been entered at all in the text fields. With respect the password field, we also probably want to set a minimum length on the password.
 
-Let's add in a validation function that takes in a textfield and `Int` of a minimum character count, and returns a `Bool` based on whether or not the length of the string is greater than the minimum.
-```swift
-func textField(_ textField: UITextField, hasMinimumCharacters minimum: Int) -> Bool {
-  // fill in code
-}
-```
+#### Warm-up Exercises
 
-Now, let's do some validation in `shouldReturn`:
+1. Let's add in a simple validation function that takes in a textfield and `Int` of a minimum character count, and returns a `Bool` based on whether or not the length of the string is greater than the minimum. (Use the provided tests to guide your code)
+
+2. Now, let's do some validation in `shouldReturn`! Your task is to:
+    - Check which `textField` is passed into the delegate function
+    - Use `textField(_:hasMinimumCharacters:)` from the previous exercise to check if the text fields meet a minimum requirement. Let's say `nameTextField` should require 4 characters and `passwordTextField` should take 6
+    - If a `textField` doesn't meet the minimum required characters, you should display a relevant error message in `errorLabel` and `return false`
+    - If the validation passes, we should clear out the `errorLabel` so as not to confuse users
+
+<br>
+<details><summary>Hint 1: Visibility?</summary>
+<br><br>
+Some property of <code>errorLabel</code> may make it impossible to see until changed...
+<br><br>
+</details>
+<br>
+
+<details><summary>Hint 2: When is <code>shouldReturn</code> called?</summary>
+<br><br>
+You'll need to determine this in order to make sure the code works. Do some searching!
+<br><br>
+</details>
+<br>
 
 ```swift
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         print("\n ~ \(textField.debugId) SHOULD RETURN")
 
-        if textField == self.nameTextField {
-            let textIsLongEnough: Bool = self.textField(textField, hasMinimumCharacters: 1)
+        // 1. Check for which textField is passed
 
-            // write in code to handle this case
-            // 1. check the Bool value, if false, write some error message to the errorLabel
-        }
+        // 2. Check if it has the minimum required length
+        //  - 4 for nameTextField
+        //  - 6 for passwordTextField
 
-        if textField == self.passwordTextField {
-            let textIsLongEnough: Bool = self.textField(textField, hasMinimumCharacters: 6)
-
-            // write in code to handle this case
-            // 1. check the Bool value, if false, write some error message to the errorLabel
-        }
+        // 3. If not long enough, display error message in errorLabel
+        // 4. If long enough, clear error message in errorLabel
 
         return true
     }
 ```
 
-You should see something like this, if you type in your name and then a 4-letter password and hit the "Return" key (also make sure that you can see the error if you rmove your name but have a 6 letter pass. What should happen in the current logic if you don't meet either criteria? What will the error label display?):
+You should see something like this
 
-![Sample Error - Pass too Short](http://imgur.com/NGdaCrlm.jpg)
+<img src="./Images/error_label_too_short_pass.png" width="400" alt="Password too short error">
 
-Great that this works, but the validation only gets called on tapping the return key. We'd probably like it if it happened when the user also tapped the `Login` button. Let's create a new function that we can call from anywhere when we'd like to do a final validation of the textFields:
+> Discuss: What should happen in the current logic if you don't meet either criteria? What will the error label display?)
+
+3. Great that this works, but the validation only gets called on tapping the return key. We'd probably like it if it happened when the user also tapped the `Login` button. Let's create a new function that we can call from anywhere when we'd like to do a final validation of the textFields:
 
 ```swift
     // MARK: - Validations
@@ -331,10 +377,9 @@ Great that this works, but the validation only gets called on tapping the return
         // 1. some set up
         let textFields: [UITextField] = [self.nameTextField, self.passwordTextField]
         let minimumLengthRequireMents: [UITextField : Int] = [
-            self.nameTextField : 1,
+            self.nameTextField : 4,
             self.passwordTextField : 6
         ]
-
 
         // 2. iterrate over the text fields
 
@@ -346,11 +391,9 @@ Great that this works, but the validation only gets called on tapping the return
 
         // 6. return a Bool to indicate that the fields are not valid
 
-
-
         // 7. hide the error label if all gets validated
 
-        // 8. indicate that the fields are valid
+        // 8. indicate that the fields are invalid
         return true
     }
 ```
@@ -359,23 +402,25 @@ Now with this function in place, we can remove all of our previous code from `sh
 
 ```swift
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        print("\n ~ \(textField.debugId) SHOULD RETURN")
-
-        // this will generate a warning about an unused return variable without the "_ = "
-        _ = self.textFieldsAreValid()
-
-        return true
+        print("\n + \(textField.debugId) SHOULD RETURN")
+        return self.textFieldsAreValid()
     }
 ```
 
-> Swift will likely give you a warning about "Result of call to 'textFieldsAreValid()" is unused. This is because by default, there is a setting in "Build Settings" for projects that automatically generates these warnings. You can silence these in two ways:
+Additionally, in the `IBAction` we set up for the `loginButton`,`didTapLogin` we could call the same function so that we can valid not only on return, but on pressing `Login`!:
+
+```swift
+    // MARK: - Actions
+    @IBAction func didTapLogin(_ sender: UIButton) {
+        print("Tapped Login")
+        self.textFieldsAreValid()
+    }
+```
+
+> Swift will give you a warning about "Result of call to 'textFieldsAreValid()" is unused. This is because by default, there is a setting in "Build Settings" for projects that automatically generates these warnings. You can silence these in two ways:
 
 1. Add `@discardableResult` just before the `func` keyword of a function or
 2. Assigning the return value to `_` (as in `_ = self.textFieldsAreValid()`)
-
-![Compiler Warning Source](http://imgur.com/WgswdSdl.jpg)
-
-**And as tempting as it might be, you don't want to change this build setting to `No`**
 
 
 ---
