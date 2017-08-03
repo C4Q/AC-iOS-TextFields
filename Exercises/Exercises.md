@@ -58,3 +58,42 @@ func textField(_ textField: UITextField, hasMinimumCharacters minimum: Int) -> B
 		return true
 	}
 ```
+
+### Solution for `textFieldsAreValid`
+
+```swift
+	func textFieldsAreValid() -> Bool {
+
+        // 1. some set up
+		let textFields: [UITextField] = [self.nameTextField, self.passwordTextField]
+		let minimumLengthRequireMents: [UITextField : Int] = [
+			self.nameTextField : 4,
+			self.passwordTextField : 6
+		]
+
+        // 2. iterrate over the text fields
+		for field in textFields {
+			let minimumLengthForField = minimumLengthRequireMents[field]!
+			let minimumLengthMet = textField(field, hasMinimumCharacters: minimumLengthForField)
+
+			// 3. if the textfield doesn't have the minimum required characters...
+			if !minimumLengthMet {
+				// 4. make sure that the label isn't hidden
+				self.errorLabel.isHidden = false
+
+				// 5. display an error to rhe user
+				// 6. indicate that the fields are not valid
+				self.errorLabel.text = "You must have at least \(minimumLengthForField) letters in \(field.debugId)"
+
+				// 8. indicate that the fields are invalid
+				return false
+			}
+			else {
+				// 7. hide the error label if all gets validated
+				self.errorLabel.isHidden = true
+			}
+		}
+
+        return true
+    }
+```

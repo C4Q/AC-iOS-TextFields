@@ -322,7 +322,7 @@ The most basic of validation is checking to make sure that something has been en
 
 #### Warm-up Exercises
 
-1. Let's add in a simple validation function that takes in a textfield and `Int` of a minimum character count, and returns a `Bool` based on whether or not the length of the string is greater than the minimum. (Use the provided tests to guide your code)
+1. Let's add in a simple validation function that takes in a textfield and `Int` of a minimum character count, and returns a `Bool` based on whether or not the length of the string is greater than the minimum. *(Use the provided tests to guide your code for this exercise)*
 
 2. Now, let's do some validation in `shouldReturn`! Your task is to:
     - Check which `textField` is passed into the delegate function
@@ -398,7 +398,9 @@ You should see something like this
     }
 ```
 
-Now with this function in place, we can remove all of our previous code from `shouldReturn` and replace it with just:
+#### Cleaning up
+
+Now with the `textFieldsAreValid` in place, we can remove all of our previous code from `shouldReturn` and replace it with just:
 
 ```swift
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
