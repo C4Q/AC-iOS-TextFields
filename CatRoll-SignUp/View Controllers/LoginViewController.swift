@@ -75,7 +75,8 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     func string(_ string: String, containsOnly characterSet: CharacterSet) -> Bool {
         // fill in code
-        return true
+		let invalidCharRange = string.rangeOfCharacter(from: characterSet.inverted)
+        return invalidCharRange == nil
     }
     
     
@@ -85,6 +86,37 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
     
     // MARK: - UITextFieldDelegate
     // (add delegate functions below here)
+	
+	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+		
+		if textField == self.nameTextField && string != "" {
+			let validChar = self.string(string, containsOnly: CharacterSet.letters)
+			
+			if !validChar {
+				updateErrorLabel(with: "Your Name Can Only Contain Letters")
+				return false
+			}
+			else {
+				updateErrorLabel(with: nil)
+			}
+		}
+		
+		return true
+	}
+	
+	func updateErrorLabel(with message: String?) {
+		if message == nil {
+			self.errorLabel.isHidden = true
+		}
+		
+		if self.errorLabel.isHidden {
+			self.errorLabel.isHidden = false
+		}
+		
+		self.errorLabel.text = message
+		self.errorLabel.textColor = UIColor.red
+		self.errorLabel.backgroundColor = UIColor.red.withAlphaComponent(0.25)
+	}
 	
 	// the .debugId property is defined in an extension, it's not actually part of UITextField
 	func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {

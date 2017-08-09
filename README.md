@@ -18,6 +18,7 @@
 ### Vocabulary
 
 1. **Delegate**: dafjsdfd
+2. **Refactoring**: dkhjfdkh
 
 ---
 ### 0. Objectives
@@ -29,10 +30,13 @@
 
 Imagine a job posting for a personal assistant by some employer:
 
+> **Help Wanted:**
+>
 > **Seeking**: Personal Assistant
+>
 > **Needed Skills**: Organizing Calendar, Taking Calls, Running Errands
 
-The employer looking for and assistant is likely busy with other things, so much so that they don't have time to *organize their calendar*, or *take all their calls*, or *run errands*. But, they're willing to delegate out some of their responsibilities to their assistant. The employer doesn't really have preference for how their assistant does these tasks - they're only concerned that the tasks get done. And once something gets done, they only want to be informed by their assistant.
+The employer looking for an assistant is likely busy with other things, so much so that they don't have time to *organize their calendar*, or *take all their calls*, or *run errands*. But, they're willing to delegate out some of their responsibilities to their assistant. The employer doesn't really have preference for how their assistant does these tasks - they're only concerned that the tasks get done. And once something gets done, they only want to be informed by their assistant.
 
 Think of a `protocol` as a job posting looking for certain skills:
 
@@ -79,29 +83,27 @@ To continue the analogy, let's create a class called `Employer`. This `Employer`
 
 #### The `Employee: PersonalAssistant`
 
-On the other side of things, we have an `Employee` class. The `Employee` is interested in applying to be a `PersonalAssistant`, so they can guarantee that they can fulfill the required tasks of `organizeCalendar()`, `takeCalls()`, and `runErrands`.
+On the other side of things, we have an `Employee` class. The `Employee` is interested in applying to be a `PersonalAssistant`, which means that they can guarantee that they can fulfill the required tasks of `organizeCalendar()`, `takeCalls()`, and `runErrands`.
 
 ```swift
   // This Employee conforms to the PersonalAssistant protocol
   class Employee: PersonalAssistant {
 
-    // 1. This employee has an additional ability, greeting people
+    // 1. This employee has an additional ability outside of the requirements of the job description (being able to greeting people)
     func greet() {
         print("Hi there, I'm your Personal Assistant")
     }
 
-    // 2. But because Employee conforms to the PersonalAssistant protocol/job description, one of its required skills is to organizeCalendar
+    // 2. But because Employee conforms to the PersonalAssistant protocol/job description,
+    //    its required skills are to organizeCalendar, takeCalls, and runErrands
     func organizeCalendar() {
       print("Organizing your calendar")
     }
 
-    // 3. Additionally, the employee needs to guarantee that they can take calls and let their employer know about it
     func takeCalls() -> Bool {
       print("Answering calls")
       return true
     }
-
-    // 4. And lastly, the employee can runErrands
     func runErrands() {
         print("Off running some errands")
     }
@@ -110,52 +112,40 @@ On the other side of things, we have an `Employee` class. The `Employee` is inte
 
 #### First Day on the Job
 
-We could imagine the first day on the job looking like this:
+To see delegation in action, we could imagine `Employee`'s first day on the job looking like this:
 
 ```swift
 
 // 8am, Employer gets into work. An Employee is coming in at 9am for an interview
 let boss = Employer()
 
-// 8:30a, boss has a meeting to go to
+// 8:30am, boss has a meeting to go to
 boss.busyAtAMeeting() // prints "Calls going to voicemail"
 
-// 9a. Employee arrives for the interview to be a PersonalAssistant
+// 9am. Employee arrives for the interview to be a PersonalAssistant
 let assistant = Employee()
 assistant.greet() // prints "Hi there, I'm your Personal Assistant" ... boss thinks this is a little too soon, they haven't gotten the job yet... 🤦‍♂️
 
-// 10a. boss is so impressed by the new assistant! hires them right on the spot❗❗❗ 💰
+// 10am. boss is so impressed by the new assistant! hires them right on the spot❗❗❗ 💰
 boss.hirePersonalAssistant(assistant)
 
-// 11a. boss heads into another meeting. but now has an assistant!
+// 11am. boss heads into another meeting. but now has an assistant!
 boss.busyAtAMeeting()   // assistant prints "Answering calls"
                         // boss prints "Delegate is taking the call"
 
-// 12a. boss and assistant take lunch and bond 🤝
+// 12am. boss and assistant take lunch and bond 🤝
 ```
 
 ---
 ### 2. Storyboard Setup
 
-#### Orienting Yourself:
+Now that we know a little more about the concept behind protocols and delegation, let's start to build out the project. Keep in mind the examples just covered as we go through and talk about `UITextfield`.
 
-- You are provided 3 `UIViewController` subclasses in the project already:
-    - `MainViewController`, `LoginViewController`, `SignupViewController`
-- In your `Main.storyboard`, there will be a `MainViewController` with `UINavigationController` already embedded
+#### Project Starters:
 
-#### Challenge:
-
-A core skill for any iOS developer is being able to look at a mock up and translating it into code and/or a storyboard. If you feel up to it, take a look at the following images and try to get as far as you can in your design in storyboard. If you get stuck, or think you've finished, go ahead and double check your work by following the instructions in the next section!
-
-#### Storyboard
-<img src="./Images/login_screen_storyboard.png" width="400" alt="Login Screen Setup Storyboard">
-
-#### Running in Simulator
-<img src="./Images/login_screen_sim.png" width="400" alt="Login Screen in Simulator (7s+)">
-
----
-
-#### Deep Dive into the Storyboard:
+> Note: You are provided 3 `UIViewController` subclasses in the project already:`MainViewController`, `LoginViewController`, `SignupViewController`
+>
+> In your `Main.storyboard`, there will be a `MainViewController` with `UINavigationController` already embedded
 
 1. Add two buttons to `MainViewController`
     - Label them `Login` and `Signup`
@@ -168,6 +158,24 @@ A core skill for any iOS developer is being able to look at a mock up and transl
     - Add a `show` segue with the identifier `signupSegue` from the `Signup` button to the other VC. Change this VC to `SignupViewController`
     - Run project and make sure navigation is working
     - <img src="./Images/basic_storyboard_layout.png" width="550" alt="basic layout of project">
+
+Run the project now and make sure you can navigate between the main view controller and both the login and signup controllers.
+
+#### Challenge:
+
+A core skill for any iOS developer is being able to look at a mock up and translating it into code and/or a storyboard. If you feel up to it, take a look at the following images and try to get as far as you can in your design in storyboard. If you get stuck, or think you've finished, go ahead and double check your work by following the instructions in the next section.
+
+> Note: Somethings you will just not be able to tell from just an image alone. For example, from the image we probably wouldn't be able to tell that the password field should hide the text in it as a user types in their password. As developers, we can only make so many assumptions about what a design indicates.
+
+#### Storyboard
+<img src="./Images/login_screen_storyboard.png" width="400" alt="Login Screen Setup Storyboard">
+
+#### Running in Simulator
+<img src="./Images/login_screen_sim.png" width="400" alt="Login Screen in Simulator (7s+)">
+
+---
+### 3. Full Login Storyboard Setup (*spoilers!*)
+
 3. To the `LoginViewController`, add a `UILabel` and a `UITextField` just below it.
     - Set their margins to `8pt` on top, left and right, making sure to check "relative to margins"
     - Label the label as `Name`, `18 - pt, System Light`
@@ -222,19 +230,26 @@ A core skill for any iOS developer is being able to look at a mock up and transl
 #### Running in Simulator
 <img src="./Images/login_screen_sim.png" width="400" alt="Login Screen in Simulator (7s+)">
 
-
 ---
-### 2. A single `delegate`/assistant for many objects/employers
+### 4. A Single `delegate` for Many "Employers"
+
+You can imagine a `UITextField` as an `Employer` that's on the hunt for an `Employee` that can handle some `delegate`d work. A `UITextField`'s delegate handles many aspects of a user's interaction with the `UITextField`. If we turned `UITextFieldDelegate` into a job description, we would end up with something like:
 
 ```
 Job Posting: UITextfieldDelegate
-Qualifications: textFieldShouldBeginEditing, textFieldDidBeginEditing, textFieldShouldEndEditing, etc.
+Qualifications:
+
+- textFieldShouldBeginEditing,
+- textFieldDidBeginEditing,
+- textFieldShouldEndEditing,
+- etc.
+
 Employer: UITextfield
 ```
 
-In the case of `UITextField`, the `UITextField` is the employer that is delegating certain actions to it's `UITextFieldDelegate`. Its delegate is responsible for responding to those actions as needed. But because a `UITextFieldDelegate` can be a delegate for many `UITextField`s at once, it has a parameter in its protocol functions to identify which `UITextField` has delegated out a task.
+But because a `UITextFieldDelegate` can be a delegate for many `UITextField`s at once, it has a parameter in its protocol functions to identify which `UITextField` has delegated out a task.
 
-The analogy for the `PersonalAssistant` would be that the assistant could work for multiple employers at once, so we could re-write the protocol functions to include a parameter to let the assistant know which one of their bosses requires help:
+The analogy for the `PersonalAssistant` would be that the assistant could work for multiple bosses at once, so we could re-write the protocol functions to include a parameter to let the assistant know which one of their bosses requires help:
 
 ```swift
   protocol PersonalAssistant {
@@ -257,12 +272,9 @@ The analogy for the `PersonalAssistant` would be that the assistant could work f
   }
 ```
 
-Including the owning object (the employer) as a parameter in the protocol's function is a common pattern in delegation, and you will see it often. For example, looking at the functions for a [`UITableViewDelegate`](https://developer.apple.com/documentation/uikit/uitableviewdelegate#), we notice that they each have a parameter of `tableView: UITableView` corresponding to the table that is alerting the delegate (there *could* be multiple, eventhough we have only ever used one so far).
+Including the owning object (the `Employer`) as a parameter in the protocol's function is a common pattern in iOS delegation, and you will see it very often. For example, looking at the functions for a [`UITableViewDelegate`](https://developer.apple.com/documentation/uikit/uitableviewdelegate#), we notice that they each have a parameter of `tableView: UITableView` corresponding to the table that is alerting the delegate (there *could* be multiple, eventhough we have only ever used one so far). The other parameters in delegate functions are related to the "task" that particular function is meant to do. `UITextFieldDelegate` follows this pattern as well, and if you browse the class's [documentation](https://developer.apple.com/documentation/uikit/uitextfielddelegate), you'll see that the function each get passed a parameter of type `UITextField`.
 
-The other parameters in delegate functions are related to the "task" that particular function is meant to do. With that in mind, let's look at `textField(shouldChangeCharactersIn:replacementString:)`
-
-#### `textFieldShouldChangeCharacters` (shorthand)
-This delegate function is often used in pattern checking for text fields. For example, an app's password text field may only want to accept alphanumeric characters, and inputing a punctuation symbol, like a period or dash, shouldn't be allowed.
+With all that in mind let's look at one particular delegate function, `textField(shouldChangeCharactersIn:replacementString:)` which is responsible for deciding whether or not text can be added or deleted from a `UITextField`. Commonly this delegate function is used in pattern checking for text fields. For example, an app's password text field may only want to accept alphanumeric characters, and inputing a punctuation symbol, like a period or dash, shouldn't be allowed.
 
 From the Apple Doc for `textField(shouldChangeCharactersIn:replacementString:)`:
 
@@ -273,7 +285,9 @@ Now, using what we know of this protocol function along with our testing of the 
 ---
 ### 3. Text Field Delegation
 
-1. Declare that `LoginViewController` will be a `UITextfieldDelegate`:
+> Note: Make sure that you've added delegate outlets for each of `UITextField` in `LoginViewController` as described in the earlier setup. You can verify this by selecting the textfield in storyboard and then opening the **Connections Inspector** panel on the right. <img src="./Images/inspecting_delegate_connections.png" width="500" alt="Inspecting Delegate Connections">
+
+1. Declare that `LoginViewController` will conform to the `UITextfieldDelegate` protocol:
     - `class LoginViewController: UIViewController, UITextFieldDelegate`
 1. Add in the following `UITextFieldDelegate` functions to `LoginViewController` (note: as you start typing the word `text` you should see a number of options to autocomplete):
     - `textFieldShouldBeginEditing`
@@ -315,18 +329,19 @@ Run the project again, and tap the textFields and observe the output to console.
 
 <img src="./Images/debugging_output_textfields.png" width="500" alt="Sample output in the console after playing with textfields">
 
+> *Developer's Note*: Anytime we try out something new, **experiment with it!!** The best way to learn coding is by playing around with code to see what happens. Eventhough instructions are laid out in detail, this lesson is no exception . You should feel free to Google questions to you have or just try adding some custom code the the scaffold this lesson builds. If you break something 💔, good! Learn to fix it 🔨😉❤️
+
 ----
-### 4. Validation through `UITextFieldDelegate`
+### 4. Text Validation through `UITextFieldDelegate`
 
 The most basic of validation is checking to make sure that something has been entered at all in the text fields. With respect the password field, we also probably want to set a minimum length on the password.
 
 #### Warm-up Exercises
 
-1. Let's add in a simple validation function that takes in a textfield and `Int` of a minimum character count, and returns a `Bool` based on whether or not the length of the string is greater than the minimum. *(Use the provided tests to guide your code for this exercise)*
-
-2. Now, let's do some validation in `shouldReturn`! Your task is to:
-    - Check which `textField` is passed into the delegate function
-    - Use `textField(_:hasMinimumCharacters:)` from the previous exercise to check if the text fields meet a minimum requirement. Let's say `nameTextField` should require 4 characters and `passwordTextField` should take 6
+1. Let's add in a simple validation function that takes in a textfield and `Int` of a minimum character count, and returns a `Bool` based on whether or not the length of the string is greater than the minimum. *(Use the provided tests to guide your code for this exercise!!!)*
+2. With this new function, we now need to add some code into `shouldReturn` to add in the validation. Your task is to add code to `textFieldShouldReturn` that:
+    - Checks which `textField` is passed into the delegate function
+    - Uses `textField(_:hasMinimumCharacters:)` to check if the text fields meet a minimum requirement. Let's have `nameTextField` require 4 characters and `passwordTextField` require 6.
     - If a `textField` doesn't meet the minimum required characters, you should display a relevant error message in `errorLabel` and `return false`
     - If the validation passes, we should clear out the `errorLabel` so as not to confuse users
 
@@ -338,7 +353,7 @@ Some property of <code>errorLabel</code> may make it impossible to see until cha
 </details>
 <br>
 
-<details><summary>Hint 2: When is <code>shouldReturn</code> called?</summary>
+<details><summary>Hint 2: When is <code>textFieldShouldReturn</code> called?</summary>
 <br><br>
 You'll need to determine this in order to make sure the code works. Do some searching!
 <br><br>
@@ -346,6 +361,7 @@ You'll need to determine this in order to make sure the code works. Do some sear
 <br>
 
 ```swift
+    // You can use the comments below, along with your tests, to help guide you
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         print("\n ~ \(textField.debugId) SHOULD RETURN")
 
@@ -362,13 +378,17 @@ You'll need to determine this in order to make sure the code works. Do some sear
     }
 ```
 
-You should see something like this
+If you've implemented the code correctly, you should see something like this when trying to return on a password that isn't long enough:
 
 <img src="./Images/error_label_too_short_pass.png" width="400" alt="Password too short error">
 
-> Discuss: What should happen in the current logic if you don't meet either criteria? What will the error label display?)
 
-3. Great that this works, but the validation only gets called on tapping the return key. We'd probably like it if it happened when the user also tapped the `Login` button. Let's create a new function that we can call from anywhere when we'd like to do a final validation of the textFields:
+> Discuss: What should happen in the current logic if you don't meet either criteria? Meaning what will the error label display if both the name and password fields didn't meet the requirements?)
+
+
+Great that this works, but the validation only gets called on tapping the return key. We'd probably like it if it happened when the user also tapped the `Login` button. Because we're looking for the exact same functionality *(validation)* to occur from multiple actions *(either tapping the "return" key or Login button)*, we know that this would be a good time to create a separate function for the task so we don't need to write the same validation code in two places.
+
+Let's create a function that we can call from anywhere when we'd like to do a final validation of the textFields. Keep in mind that because our form has multiple text fields, and each text field will have different validation requirements, we'll need know which textfield is which in order to make sure we do the correct validation and display the proper errors.
 
 ```swift
     // MARK: - Validations
@@ -398,9 +418,9 @@ You should see something like this
     }
 ```
 
-#### Cleaning up
+#### Cleaning Up/Refactoring
 
-Now with the `textFieldsAreValid` in place, we can remove all of our previous code from `shouldReturn` and replace it with just:
+Now with `textFieldsAreValid` in place, we can remove all of our previous code from `shouldReturn` and replace it with just:
 
 ```swift
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -419,19 +439,23 @@ Additionally, in the `IBAction` we set up for the `loginButton`,`didTapLogin` we
     }
 ```
 
-> Swift will give you a warning about "Result of call to 'textFieldsAreValid()" is unused. This is because by default, there is a setting in "Build Settings" for projects that automatically generates these warnings. You can silence these in two ways:
+> Note: Swift will give you a warning about "Result of call to 'textFieldsAreValid()" is unused. This is because by default, there is a setting in "Build Settings" for projects that automatically generates these warnings. You can silence these in two ways:
+> 1. Add `@discardableResult` just before the `func` keyword of a function or
+> 2. Assigning the return value to `_` (as in `_ = self.textFieldsAreValid()`)
 
-1. Add `@discardableResult` just before the `func` keyword of a function or
-2. Assigning the return value to `_` (as in `_ = self.textFieldsAreValid()`)
+> Developer's Note: Take another moment to think about why it was valuable here to move code that would perform the same task out into its own function. You may be wondering why we couldn't simply copy-paste the code into each part.
+>
+> Well, you *could* do that and that would work... now. But if you needed to make *any* changes to that code you copied, you'd have to make it **EVERYWHERE** you copied it. And because we're human, there's a good chance we're not going to remember *every* place that code needs to be changed. And so, we've introduced to potential for nasty bugs.
 
 
 ---
-### 4. Live Validation
+### 5. Live Validation
+
 As previously mentioned, we can also do "live" validation. Meaning, the user receives feedback about what they're typing as they type rather than when finally hitting `return` or the `login` button.
 
->> TODO: fill out exercise answers, add to exercises file
 #### Exercise:
-1. This process of live validation is done in `shouldChangeCharacters`. Let's add a validation to the `nameTextField` making sure that users can only type in letters and spaces.
+
+1. This process of live validation is commonly done in `shouldChangeCharacters`. Let's add a validation to the `nameTextField` making sure that users can only type in letters. But because we're probably going to want to do something similar to the password textfield, let's create a separate function in `LoginViewController` that will allow use to reuse code *and* unit test.
 
 ```swift
     func string(_ string: String, containsOnly characterSet: CharacterSet) -> Bool {
@@ -441,14 +465,13 @@ As previously mentioned, we can also do "live" validation. Meaning, the user rec
     }
 ```
 
-Now with that in place, let's update `shouldChangeCharacters`:
+Once you're done writing and testing the code, update `shouldChangeCharacters` to make use of the new function
 
 ```swift
   func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 
         // only interested in doing this validation for self.nameTextField
         // and per documentation, string can be empty if the change is a deletion
-
         if textField == self.nameTextField && string != "" {
             return self.string(string, containsOnly: CharacterSet.letters.union(CharacterSet.whitespaces))
         }
@@ -458,11 +481,35 @@ Now with that in place, let's update `shouldChangeCharacters`:
 
 ```
 
-Run your project and test your validation method. You should now only be able to type letters in the name text field. Trying to type a number should result in nothing appearing. The last part of this is to alert the user to the error. Go ahead and update the `errorLabel` with some text to let the user know the error (and also be sure to clear the label when a valid character is typed!)
+<br>
+<details><summary>Hint 1: Work with the <code>String</code></summary>
+<br><br>
+You're going to want to use <code>rangeOfCharacter(from:)</code> if you're using Swift 3.x
+<br><br>
+</details>
+<br>
 
-To help you out, use this function to update your `errorLabel` (and replace where appropriate in your code)
+<br>
+<details><summary>Hint 2: CharacterSets</summary>
+<br><br>
+Check out the documentation for <code>CharacterSet</code>, you'll find it incredibly useful for this exercise.
+<br><br>
+</details>
+<br>
+
+---
+
+
+2. Run your project and test your validation method. You should now only be able to type letters in the name text field. Trying to type a number should result in nothing appearing. The last part of this is to alert the user to the error. Go ahead and update the `errorLabel` with some text to let the user know the error (and also be sure to clear the label when a valid character is typed!)
+
+To help you out, use this helper function to update your `errorLabel` (and replace where appropriate in your code). Make sure you can read and understand what the function is doing.
+
 ```swift
-      func updateErrorLabel(with message: String) {
+    func updateErrorLabel(with message: String? = nil) {
+        if message == nil {
+            self.errorLabel.isHidden = true
+        }
+
         if self.errorLabel.isHidden {
             self.errorLabel.isHidden = false
         }
@@ -474,17 +521,34 @@ To help you out, use this function to update your `errorLabel` (and replace wher
 ```
 
 ---
-### 5. Exercise
+### 6. More Exercises 🏋️‍♂️
 
 > Be sure to go into uncomment the indicated code in `CatRoll_SignUpTests.swift` before beginning the exercises. All of your code should pass the tests in place. Take a look at the tests to know what to name your functions and to guide you on what they should be able to do.
 
 This is a good start, but we should add a few more validations to our login form:
 
-1. The name field should have a first _and_ last name. Do a validation to make sure there are at least 2 names in that text field (do our server a favor as well and make sure any leading & trailing white space characters are trimmed)
-  2. Tip: This is probably best done using a function you create that's called in `textFieldsAreValid` (there are a number of valid ways to go about this, such as using `split`, `first`, `indexOf`, etc..)
-  3. Tip 2: You will need to update the live validation for the `nameTextField` to allow for more than just `CharacterSet.letters` (use the tests to figure out which character sets you should be allowing). Be sure to update the error message to be accurate as well (`self.updateErrorLabel(with: "\(textField.debugId) can only contain letters, punctuation or spaces")`)
-3. We'd like for passwords to be "strong", so let's make sure that users also include *at least* one number in addition to the 6 character minimum
-4. Ok, this should be *a little* stronger, so make sure there's also at least 1 capitalized letter
+1. The name field should have a first **and** last name. Do a validation to make sure there are at least 2 words in the name text field. Additionally, make sure to `trim` any leading & trailing white space characters.
+
+<br>
+<details><summary>Hint 1: Where to Add This Code?</summary>
+<br><br>
+This is probably best written using a function you create that's called in <code>textFieldsAreValid</code>. There are a number of valid ways to go about this, such as using <code>split, first, indexOf, etc.</code>
+<br><br>
+</details>
+<br>
+
+<br>
+<details><summary>Hint 2: More Character Checks</summary>
+<br><br>
+    You will need to update the live validation for the <code>nameTextField</code> to allow for more than just <code>CharacterSet.letters</code> (use the tests to figure out which character sets you should be allowing). Be sure to update the error message to be accurate as well
+<br><br>
+</details>
+<br>
+
+2. We'd like for passwords to be "strong", so let's make sure that users also include *at least* one number in addition to the 6 character minimum
+
+3. Ok, this should be *a little* stronger, so make sure there's also at least 1 capitalized letter
+
 4. Our servers that are going to store a user's name and password are kind of old and don't like non-alphanumeric characters being used. Do a live validation of the password text field to make sure users aren't typing characters other than numbers and letters.
 
 
