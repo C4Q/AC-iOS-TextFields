@@ -100,10 +100,26 @@ func textField(_ textField: UITextField, hasMinimumCharacters minimum: Int) -> B
 
 ### Solution for `string(_:containsOnly:)`
 
+#### Swift 3.x
+
 ```swift
 	func string(_ string: String, containsOnly characterSet: CharacterSet) -> Bool {
 		// Solution using Swift 3.x
 		let invalidCharRange = string.rangeOfCharacter(from: characterSet.inverted)
         return invalidCharRange == nil
     }
+```
+
+#### Swift 4.0
+
+```swift
+	func string(_ string: String, containsOnly characterSet: CharacterSet) -> Bool {
+		for c in string.unicodeScalars {
+			if characterSet.inverted.contains(c) {
+				return false
+			}
+		}
+
+		return true
+	}
 ```

@@ -17,9 +17,9 @@
 ---
 ### Vocabulary
 
-1. **Delegate**: dafjsdfd
-2. **Refactoring**: dkhjfdkh
-3. **Validation**: lkdjflj
+1. **Delegate**: ... pattern in which one object in a program acts on behalf of, or in coordination with, another object. The delegating object keeps a reference to the other object—the delegate—and at the appropriate time sends a message to it. The message informs the delegate of an event that the delegating object is about to handle or has just handled. [Apple](https://developer.apple.com/library/content/documentation/General/Conceptual/DevPedia-CocoaCore/Delegation.html)
+2. **Refactoring**: ... the process of restructuring existing computer code ... without changing its external behavior... Advantages include improved code readability and reduced complexity. [Wiki](https://en.wikipedia.org/wiki/Code_refactoring)
+3. **(Data) Validation**: ...the process of ensuring that a program operates on clean, correct and useful data. It uses routines, often called "validation rules", "validation constraints" or "check routines", that check for correctness, meaningfulness, and security of data that are input to the system. [Wiki](https://en.wikipedia.org/wiki/Data_validation)
 
 ---
 ### 0. Objectives
@@ -553,6 +553,4 @@ This is probably best written using a function you create that's called in <code
 3. Ok, this should be *a little* stronger, so make sure there's also at least 1 capitalized letter
 
 4. Our servers that are going to store a user's name and password are kind of old and don't like non-alphanumeric characters being used. Do a live validation of the password text field to make sure users aren't typing characters other than numbers and letters.
-
-
 
