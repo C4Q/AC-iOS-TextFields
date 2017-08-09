@@ -32,33 +32,33 @@ class CatRoll_SignUpTests: XCTestCase {
 	
 	
 	func test_String_Length_Valid_10_Characters() {
-		testField.text = "Multi Char String"
-		
-		// valid
-		let validLengthResult: Bool = self.loginViewController.textField(testField, hasMinimumCharacters: minimum10)
-		
-		XCTAssertTrue(validLengthResult, "textField(:hasMinimumCharacters:) should be true when it meets a valid criteria. String: \(testField.text! as String), Min Count: \(minimum10)")
+//		testField.text = "Multi Char String"
+//
+//		// valid
+//		let validLengthResult: Bool = self.loginViewController.textField(testField, hasMinimumCharacters: minimum10)
+//
+//		XCTAssertTrue(validLengthResult, "textField(:hasMinimumCharacters:) should be true when it meets a valid criteria. String: \(testField.text! as String), Min Count: \(minimum10)")
 	}
 	
 	
 	func test_String_Length_Invalid_Less_Than_100() {
-		testField.text = "Multi Char String"
-		
-		// invalid
-		let invalidLengthResult: Bool = self.loginViewController.textField(testField, hasMinimumCharacters: minimum100)
-		
-		XCTAssertFalse(invalidLengthResult, "textField(:hasMinimumCharacters:) should be false when it doesn't meet it's minimum criteria. String: \(testField.text! as String), Min Count: \(minimum100)")
+//		testField.text = "Multi Char String"
+//
+//		// invalid
+//		let invalidLengthResult: Bool = self.loginViewController.textField(testField, hasMinimumCharacters: minimum100)
+//
+//		XCTAssertFalse(invalidLengthResult, "textField(:hasMinimumCharacters:) should be false when it doesn't meet it's minimum criteria. String: \(testField.text! as String), Min Count: \(minimum100)")
 	}
 		
 		
 	func test_String_Length_Valid_Zero_Length_Non_Nil() {
 		// case 0
-		XCTAssertTrue(self.loginViewController.textField(testField, hasMinimumCharacters: minimum0))
+//		XCTAssertTrue(self.loginViewController.textField(testField, hasMinimumCharacters: minimum0))
 	}
 	
 	func test_String_Length_Valid_NegativeOne_Length_Non_Nil() {
 		// case -1
-		XCTAssertTrue(self.loginViewController.textField(testField, hasMinimumCharacters: minimum_1))
+//		XCTAssertTrue(self.loginViewController.textField(testField, hasMinimumCharacters: minimum_1))
 	}
 	
 	func testCharacterMembershipInString() {
