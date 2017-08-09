@@ -40,6 +40,36 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 			self.passwordTextField : 6
 		]
 		
+		guard
+			let nameString: String = self.nameTextField.text,
+			let passwordString: String = self.passwordTextField.text
+			else {
+				return false
+		}
+		
+		guard
+			!nameString.isEmpty,
+			!passwordString.isEmpty
+			else {
+				self.updateErrorLabel(with: "Must not leave any fields blank")
+				return false
+		}
+		
+		guard self.twoNamesArePresent(in: nameString) else {
+			self.updateErrorLabel(with: "Name Field Must Contain At Least 2 Names (First, Family)")
+			return false
+		}
+		
+		guard self.passwordContainsAtLeastOneCapitalizedLetter(passwordString) else {
+			self.updateErrorLabel(with: "Password Must Contain At Least One Capitalized Letter")
+			return false
+		}
+		
+		guard self.passwordContainsAtLeastOneNumber(passwordString) else {
+			self.updateErrorLabel(with: "Password Must Contain At Least One Number")
+			return false
+		}
+		
         // 2. iterrate over the text fields
 		for field in textFields {
 			let minimumLengthForField = minimumLengthRequireMents[field]!
@@ -90,7 +120,7 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 		
 		if textField == self.nameTextField && string != "" {
-			let validChar = self.string(string, containsOnly: CharacterSet.letters)
+			let validChar = self.string(string, containsOnly: CharacterSet.letters.union(CharacterSet.whitespaces))
 			
 			if !validChar {
 				updateErrorLabel(with: "Your Name Can Only Contain Letters")
@@ -141,5 +171,45 @@ class LoginViewController: UIViewController, UITextFieldDelegate {
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		print("\n + \(textField.debugId) SHOULD RETURN")
 		return self.textFieldsAreValid()
+	}
+	
+	
+	// MARK: - Exercise Functions
+	func twoNamesArePresent(in string: String) -> Bool {
+		let validNameCharacters: CharacterSet = CharacterSet.letters.union(CharacterSet.punctuationCharacters)
+		
+		let components: [String] = string.trimmingCharacters(in: CharacterSet.whitespaces)
+			.components(separatedBy: CharacterSet.whitespaces)
+		
+		guard components.count >= 2 else {
+			return false
+		}
+		
+		for component in components {
+			guard
+				component.characters.count > 1,
+				self.string(component, containsOnly: validNameCharacters)
+				else {
+					return false
+			}
+		}
+		
+		return true
+	}
+	
+	func passwordContainsAtLeastOneNumber(_ string: String) -> Bool {
+		if let _ = string.rangeOfCharacter(from: CharacterSet.decimalDigits) {
+			return true
+		}
+		
+		return false
+	}
+	
+	func passwordContainsAtLeastOneCapitalizedLetter(_ string: String) -> Bool {
+		if let _ = string.rangeOfCharacter(from: CharacterSet.uppercaseLetters) {
+			return true
+		}
+		
+		return false
 	}
 }

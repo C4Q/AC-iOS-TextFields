@@ -19,11 +19,14 @@
 
 1. **Delegate**: dafjsdfd
 2. **Refactoring**: dkhjfdkh
+3. **Validation**: lkdjflj
 
 ---
 ### 0. Objectives
 
-1. Begin to understand the delegation pattern in programming
+1. Begin to understand the protocols and the delegate design pattern in programming
+2. Practice handling delegation using `UITextField` and `UITextFieldDelegate`
+3. Explore `String` through textfield validations
 
 ---
 ### 1. Delegation - Wha-huh?
