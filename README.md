@@ -170,11 +170,22 @@ A core skill for any iOS developer is being able to look at a mock up and transl
 
 > Note: Somethings you will just not be able to tell from just an image alone. For example, from the image we probably wouldn't be able to tell that the password field should hide the text in it as a user types in their password. As developers, we can only make so many assumptions about what a design indicates.
 
-#### Storyboard
-<img src="./Images/login_screen_storyboard.png" width="400" alt="Login Screen Setup Storyboard">
+<table>
+  <thead>
+    <tr>
+      <td>Storyboard</td>
+      <td> Simulator</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td width="400"><img src="./Images/login_screen_storyboard.png" width="380" alt="Login Screen Setup Storyboard">
+</td>
+      <td width="400"><img src="./Images/login_screen_sim.png" width="380" alt="Login Screen in Simulator (7s+)"></td>
+    </tr>
+  </tbody>
 
-#### Running in Simulator
-<img src="./Images/login_screen_sim.png" width="400" alt="Login Screen in Simulator (7s+)">
+</table>
 
 ---
 ### 3. Full Login Storyboard Setup (*spoilers!*)
@@ -227,11 +238,22 @@ A core skill for any iOS developer is being able to look at a mock up and transl
     - All text field delegate functions are optional, so you won't get any warnings/errors
 11. Run the project at this point, it should look like:
 
-#### Storyboard
-<img src="./Images/login_screen_storyboard.png" width="400" alt="Login Screen Setup Storyboard">
+<table>
+  <thead>
+    <tr>
+      <td>Storyboard</td>
+      <td> Simulator</td>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td width="400"><img src="./Images/login_screen_storyboard.png" width="380" alt="Login Screen Setup Storyboard">
+</td>
+      <td width="400"><img src="./Images/login_screen_sim.png" width="380" alt="Login Screen in Simulator (7s+)"></td>
+    </tr>
+  </tbody>
 
-#### Running in Simulator
-<img src="./Images/login_screen_sim.png" width="400" alt="Login Screen in Simulator (7s+)">
+</table>
 
 ---
 ### 4. A Single `delegate` for Many "Employers"
