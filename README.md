@@ -1,18 +1,11 @@
-# AC3.2 Delegation through Textfields
+# AC-iOS Protocols and Extensions (and a bit of Delegation)
 
 ---
 ### Readings
 
-1. [`UITextField` - Apple Doc Ref ](https://developer.apple.com/reference/uikit/uitextfield)
-2. [`UITextFieldDelegate` - Apple Doc Ref ](https://developer.apple.com/reference/uikit/uitextfielddelegate)
-3. [Adding Connections from UI Elements in Storyboard (Action) - Xcode Doc](http://help.apple.com/xcode/mac/8.0/#/dev9662c7670)
-4. [Managing/Checking Outlet Connections - Xcode doc](http://help.apple.com/xcode/mac/8.0/#/devc0cdc8c7a)
-5. [String Manipulation Cheat Sheet - Use Your Loaf](http://useyourloaf.com/blog/swift-string-cheat-sheet/)
-6. [Complete List of Unicode Categories - File Format](http://www.fileformat.info/info/unicode/category/index.htm)
+1. [The Swift Programming Language (Swift 4): Protocols]https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/Protocols.html
 
-#### Further Reading
 
-1. [How Delegation Works - Andrew Bancroft](https://www.andrewcbancroft.com/2015/04/08/how-delegation-works-a-swift-developer-guide/)
 
 ---
 ### Vocabulary
@@ -25,8 +18,7 @@
 ### 0. Objectives
 
 1. Begin to understand the protocols and the delegate design pattern in programming
-2. Practice handling delegation using `UITextField` and `UITextFieldDelegate`
-3. Explore `String` through textfield validations
+2. Practice handling delegation somehow
 
 ---
 ### 1. Delegation - Wha-huh?
@@ -136,7 +128,7 @@ boss.hirePersonalAssistant(assistant)
 boss.busyAtAMeeting()   // assistant prints "Answering calls"
                         // boss prints "Delegate is taking the call"
 
-// 12am. boss and assistant take lunch and bond 🤝
+// 12pm. boss and assistant take lunch and bond 🤝
 ```
 
 ---
