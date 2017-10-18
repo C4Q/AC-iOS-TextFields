@@ -1,138 +1,34 @@
-# AC-iOS Protocols and Extensions (and a bit of Delegation)
+# AC3.2 Delegation through Textfields
 
 ---
 ### Readings
 
-1. [The Swift Programming Language (Swift 4): Protocols]https://developer.apple.com/library/content/documentation/Swift/Conceptual/Swift_Programming_Language/Protocols.html
+1. [`UITextField` - Apple Doc Ref ](https://developer.apple.com/reference/uikit/uitextfield)
+2. [`UITextFieldDelegate` - Apple Doc Ref ](https://developer.apple.com/reference/uikit/uitextfielddelegate)
+3. [String Manipulation Cheat Sheet - Use Your Loaf](http://useyourloaf.com/blog/swift-string-cheat-sheet/)
+4. [Complete List of Unicode Categories - File Format](http://www.fileformat.info/info/unicode/category/index.htm)	
+5. [Adding Connections from UI Elements in Storyboard (Action) - Xcode Doc](http://help.apple.com/xcode/mac/8.0/#/dev9662c7670)
+6. [Managing/Checking Outlet Connections - Xcode doc](http://help.apple.com/xcode/mac/8.0/#/devc0cdc8c7a)
 
+#### Further Reading
 
+1. [How Delegation Works - Andrew Bancroft](https://www.andrewcbancroft.com/2015/04/08/how-delegation-works-a-swift-developer-guide/)
 
 ---
 ### Vocabulary
 
-1. **Delegate**: ... pattern in which one object in a program acts on behalf of, or in coordination with, another object. The delegating object keeps a reference to the other object—the delegate—and at the appropriate time sends a message to it. The message informs the delegate of an event that the delegating object is about to handle or has just handled. [Apple](https://developer.apple.com/library/content/documentation/General/Conceptual/DevPedia-CocoaCore/Delegation.html)
-2. **Refactoring**: ... the process of restructuring existing computer code ... without changing its external behavior... Advantages include improved code readability and reduced complexity. [Wiki](https://en.wikipedia.org/wiki/Code_refactoring)
-3. **(Data) Validation**: ...the process of ensuring that a program operates on clean, correct and useful data. It uses routines, often called "validation rules", "validation constraints" or "check routines", that check for correctness, meaningfulness, and security of data that are input to the system. [Wiki](https://en.wikipedia.org/wiki/Data_validation)
+1. **Refactoring**: ... the process of restructuring existing computer code ... without changing its external behavior... Advantages include improved code readability and reduced complexity. [Wiki](https://en.wikipedia.org/wiki/Code_refactoring)
+2. **(Data) Validation**: ...the process of ensuring that a program operates on clean, correct and useful data. It uses routines, often called "validation rules", "validation constraints" or "check routines", that check for correctness, meaningfulness, and security of data that are input to the system. [Wiki](https://en.wikipedia.org/wiki/Data_validation)
 
 ---
 ### 0. Objectives
 
 1. Begin to understand the protocols and the delegate design pattern in programming
-2. Practice handling delegation somehow
+2. Practice handling delegation using `UITextField` and `UITextFieldDelegate`
+3. Explore `String` through textfield validations
 
 ---
-### 1. Delegation - Wha-huh?
-
-Imagine a job posting for a personal assistant by some employer:
-
-> **Help Wanted:**
->
-> **Seeking**: Personal Assistant
->
-> **Needed Skills**: Organizing Calendar, Taking Calls, Running Errands
-
-The employer looking for an assistant is likely busy with other things, so much so that they don't have time to *organize their calendar*, or *take all their calls*, or *run errands*. But, they're willing to delegate out some of their responsibilities to their assistant. The employer doesn't really have preference for how their assistant does these tasks - they're only concerned that the tasks get done. And once something gets done, they only want to be informed by their assistant.
-
-Think of a `protocol` as a job posting looking for certain skills:
-
-```swift
-
-// "job posting" PersonalAssistant
-protocol PersonalAssistant {
-  func organizeCalendar()
-  func takeCalls() -> Bool
-  func runErrands()
-}
-
-```
-
-The employer doesn't necessarily care who they're hiring, just that they can do the functions required. So, a human that could do those tasks would be as valuable to them as a robot, or cat, or dolphin.
-
-A class/struct/enum that is qualified to be a `PersonalAssistant` does their functions on behalf of their "employer." Their "employer" has delegated out some of their duties, and really is only concerned that they happened. When an object is "qualified" to be a `PersonalAssistant`, it is said that they "**conform**" to the `PersonalAssistant protocol`.
-
-#### The `Employer`
-
-To continue the analogy, let's create a class called `Employer`. This `Employer` will have a property called `delegate` of type `PersonalAssistant?`. Why optional? Well, the `Employer` doesn't necessarily have a `PersonalAssistant` right off the bat -- they may need to "hire" one. For that, we'll add a function called `hirePersonalAssistant`. Lastly, the `Employer` needs to be able to declare that they are busy at a meeting and can't take any calls.
-
-```swift
-  class Employer {
-    // 1. this is optional because we may have not yet "hired" an assistant
-    var delegate: PersonalAssistant?
-
-    // 2. We can hire a new assistant
-    func hirePersonalAssistant(assistant: PersonalAssistant) {
-      self.delegate = assistant
-    }
-
-    // 3. Employer is going to a meeting, so their calls need to be handled somehow
-    func busyAtAMeeting() {
-      if self.delegate?.takeCalls() {
-        print("Delegate is taking the call")
-      }
-      else {
-        print("Calls going to voicemail")
-      }
-    }
-  }
-```
-
-#### The `Employee: PersonalAssistant`
-
-On the other side of things, we have an `Employee` class. The `Employee` is interested in applying to be a `PersonalAssistant`, which means that they can guarantee that they can fulfill the required tasks of `organizeCalendar()`, `takeCalls()`, and `runErrands`.
-
-```swift
-  // This Employee conforms to the PersonalAssistant protocol
-  class Employee: PersonalAssistant {
-
-    // 1. This employee has an additional ability outside of the requirements of the job description (being able to greeting people)
-    func greet() {
-        print("Hi there, I'm your Personal Assistant")
-    }
-
-    // 2. But because Employee conforms to the PersonalAssistant protocol/job description,
-    //    its required skills are to organizeCalendar, takeCalls, and runErrands
-    func organizeCalendar() {
-      print("Organizing your calendar")
-    }
-
-    func takeCalls() -> Bool {
-      print("Answering calls")
-      return true
-    }
-    func runErrands() {
-        print("Off running some errands")
-    }
-  }
-```
-
-#### First Day on the Job
-
-To see delegation in action, we could imagine `Employee`'s first day on the job looking like this:
-
-```swift
-
-// 8am, Employer gets into work. An Employee is coming in at 9am for an interview
-let boss = Employer()
-
-// 8:30am, boss has a meeting to go to
-boss.busyAtAMeeting() // prints "Calls going to voicemail"
-
-// 9am. Employee arrives for the interview to be a PersonalAssistant
-let assistant = Employee()
-assistant.greet() // prints "Hi there, I'm your Personal Assistant" ... boss thinks this is a little too soon, they haven't gotten the job yet... 🤦‍♂️
-
-// 10am. boss is so impressed by the new assistant! hires them right on the spot❗❗❗ 💰
-boss.hirePersonalAssistant(assistant)
-
-// 11am. boss heads into another meeting. but now has an assistant!
-boss.busyAtAMeeting()   // assistant prints "Answering calls"
-                        // boss prints "Delegate is taking the call"
-
-// 12pm. boss and assistant take lunch and bond 🤝
-```
-
----
-### 2. Storyboard Setup
+### 1. Storyboard Setup
 
 Now that we know a little more about the concept behind protocols and delegation, let's start to build out the project. Keep in mind the examples just covered as we go through and talk about `UITextfield`.
 
@@ -180,7 +76,7 @@ A core skill for any iOS developer is being able to look at a mock up and transl
 </table>
 
 ---
-### 3. Full Login Storyboard Setup (*spoilers!*)
+### 2. Full Login Storyboard Setup (*spoilers!*)
 
 3. To the `LoginViewController`, add a `UILabel` and a `UITextField` just below it.
     - Set their margins to `8pt` on top, left and right, making sure to check "relative to margins"
@@ -248,7 +144,7 @@ A core skill for any iOS developer is being able to look at a mock up and transl
 </table>
 
 ---
-### 4. A Single `delegate` for Many "Employers"
+### 3. A Single `delegate` for Many "Employers"
 
 You can imagine a `UITextField` as an `Employer` that's on the hunt for an `Employee` that can handle some `delegate`d work. A `UITextField`'s delegate handles many aspects of a user's interaction with the `UITextField`. If we turned `UITextFieldDelegate` into a job description, we would end up with something like:
 
@@ -300,7 +196,7 @@ From the Apple Doc for `textField(shouldChangeCharactersIn:replacementString:)`:
 Now, using what we know of this protocol function along with our testing of the other `UITextFieldDelegate` functions, let's do a basic login form with validation (something that is extremely common).
 
 ---
-### 3. Text Field Delegation
+### 4. Text Field Delegation
 
 > Note: Make sure that you've added delegate outlets for each of `UITextField` in `LoginViewController` as described in the earlier setup. You can verify this by selecting the textfield in storyboard and then opening the **Connections Inspector** panel on the right. <img src="./Images/inspecting_delegate_connections.png" width="500" alt="Inspecting Delegate Connections">
 
@@ -349,7 +245,7 @@ Run the project again, and tap the textFields and observe the output to console.
 > *Developer's Note*: Anytime we try out something new, **experiment with it!!** The best way to learn coding is by playing around with code to see what happens. Eventhough instructions are laid out in detail, this lesson is no exception . You should feel free to Google questions to you have or just try adding some custom code the the scaffold this lesson builds. If you break something 💔, good! Learn to fix it 🔨😉❤️
 
 ----
-### 4. Text Validation through `UITextFieldDelegate`
+### 5. Text Validation through `UITextFieldDelegate`
 
 The most basic of validation is checking to make sure that something has been entered at all in the text fields. With respect the password field, we also probably want to set a minimum length on the password.
 
@@ -466,7 +362,7 @@ Additionally, in the `IBAction` we set up for the `loginButton`,`didTapLogin` we
 
 
 ---
-### 5. Live Validation
+### 6. Live Validation
 
 As previously mentioned, we can also do "live" validation. Meaning, the user receives feedback about what they're typing as they type rather than when finally hitting `return` or the `login` button.
 
@@ -538,7 +434,7 @@ To help you out, use this helper function to update your `errorLabel` (and repla
 ```
 
 ---
-### 6. More Exercises 🏋️‍♂️
+### 7. More Exercises 🏋️‍♂️
 
 > Be sure to go into uncomment the indicated code in `CatRoll_SignUpTests.swift` before beginning the exercises. All of your code should pass the tests in place. Take a look at the tests to know what to name your functions and to guide you on what they should be able to do.
 
@@ -567,4 +463,3 @@ This is probably best written using a function you create that's called in <code
 3. Ok, this should be *a little* stronger, so make sure there's also at least 1 capitalized letter
 
 4. Our servers that are going to store a user's name and password are kind of old and don't like non-alphanumeric characters being used. Do a live validation of the password text field to make sure users aren't typing characters other than numbers and letters.
-
